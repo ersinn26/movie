@@ -1,7 +1,11 @@
 import React, { createContext, useContext, useState } from "react";
 import { auth } from "../auth/firebase";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
 import { useNavigate } from "react-router-dom";
+import { toastSuccessNotify } from "../helper/ToastNotify";
 
 const AuthContext = createContext();
 export const useAuthContext = () => {
@@ -9,7 +13,7 @@ export const useAuthContext = () => {
 };
 const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(false);
-const navigate = useNavigate();
+  const navigate = useNavigate();
 
   const createUser = async (email, password) => {
     try {
@@ -18,14 +22,27 @@ const navigate = useNavigate();
         email,
         password
       );
-      navigate("/login")
+      navigate("/login");
+      toastSuccessNotify("Account created successfully");
       console.log(userCredential);
     } catch (error) {
+      toastSuccessNotify(error.message);
+      console.log(error);
+    }
+  };
+  const signIn = async (email, password) => {
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      navigate("/");
+      toastSuccessNotify("Login successfully");
+      // console.log(userCredential);
+    } catch (error) {
+      toastSuccessNotify(error.message);
       console.log(error);
     }
   };
 
-  const values = { currentUser, createUser };
+  const values = { currentUser, createUser, signIn };
   return <AuthContext.Provider value={values}>{children}</AuthContext.Provider>;
 };
 
