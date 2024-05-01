@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState } from "react";
 import { auth } from "../auth/firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
+import { useNavigate } from "react-router-dom";
 
 const AuthContext = createContext();
 export const useAuthContext = () => {
@@ -8,6 +9,8 @@ export const useAuthContext = () => {
 };
 const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(false);
+const navigate = useNavigate();
+
   const createUser = async (email, password) => {
     try {
       const userCredential = await createUserWithEmailAndPassword(
@@ -15,6 +18,7 @@ const AuthProvider = ({ children }) => {
         email,
         password
       );
+      navigate("/login")
       console.log(userCredential);
     } catch (error) {
       console.log(error);
