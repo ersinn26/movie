@@ -3,6 +3,7 @@ import { auth } from "../auth/firebase";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  signOut,
 } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import { toastSuccessNotify } from "../helper/ToastNotify";
@@ -42,7 +43,16 @@ const AuthProvider = ({ children }) => {
     }
   };
 
-  const values = { currentUser, createUser, signIn };
+  const logOut = () => {
+    signOut(auth).then(() => {
+      toastSuccessNotify("Logout successfully");
+    })
+    .catch((error) => {
+      
+    });
+  };
+
+  const values = { currentUser, createUser, signIn,logOut };
   return <AuthContext.Provider value={values}>{children}</AuthContext.Provider>;
 };
 
