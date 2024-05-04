@@ -1,7 +1,8 @@
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import { auth } from "../auth/firebase";
 import {
   createUserWithEmailAndPassword,
+  onAuthStateChanged,
   signInWithEmailAndPassword,
   signOut,
 } from "firebase/auth";
@@ -15,6 +16,10 @@ export const useAuthContext = () => {
 const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    userObserver();
+  }, []);
 
   const createUser = async (email, password) => {
     try {
@@ -51,6 +56,17 @@ const AuthProvider = ({ children }) => {
       
     });
   };
+
+  const userObserver = () => {
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        const { email, displayName, photoURL } = user;
+        setCurrentUser({ email, displayName, photoURL });
+      } else {
+        setCurrentUser(false);
+      }
+    });
+  }
 
   const values = { currentUser, createUser, signIn,logOut };
   return <AuthContext.Provider value={values}>{children}</AuthContext.Provider>;
