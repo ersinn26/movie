@@ -1,6 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import axios from "axios";
-
 const MovieContext = createContext();
 
 export const useMovieContext = () => {
@@ -13,20 +12,25 @@ const MovieProvider = ({ children }) => {
   const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const getMovies = () => {
+  const getMovies = (URL) => {
     setLoading(true);
     axios
-      .get(FEATURED_API)
+      .get(URL)
       .then((res) => setMovies(res.data.results))
       .catch((err) => console.log(err))
       .finally(() => setLoading(false));
   };
   useEffect(() => {
-    getMovies();
+    getMovies(FEATURED_API);
   }, []);
 
-//   console.log(movies);
-  return <MovieContext.Provider value={{movies, loading}}>{children}{""}</MovieContext.Provider>;
+  //   console.log(movies);
+  return (
+    <MovieContext.Provider value={{ movies, loading, getMovies }}>
+      {children}
+      {""}
+    </MovieContext.Provider>
+  );
 };
 
 export default MovieProvider;
