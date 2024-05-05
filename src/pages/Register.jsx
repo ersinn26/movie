@@ -11,15 +11,16 @@ const Register = () => {
     password: "",
   });
 
-  const { createUser } = useAuthContext();
+  const { createUser,googleProvider } = useAuthContext();
   const handleChange = (e) => {
     setInfo({ ...info, [e.target.name]: e.target.value });
     console.log(info);
   };
-  const { email, password } = info;
+  const { email, password,firstName,lastName } = info;
   const handlesubmit = (e) => {
     e.preventDefault();
-    createUser(email, password);
+    const displayName = `${firstName} ${lastName}`;
+    createUser(email, password,displayName);
     console.log(info);
   };
 
@@ -80,7 +81,7 @@ const Register = () => {
             </button>
             <button
               className="flex justify-between text-center items-center btn-danger"
-              type="button"
+              type="button" onClick={()=>googleProvider()}
             >
               Continue with Google
               <GoogleIcon color="currentColor" />
